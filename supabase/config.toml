@@ -1,0 +1,3 @@
+[functions.recreate-users]
+verify_jwt = false
+entrypoint = "./functions/recreate-users/index.ts"

@@ -1,0 +1,83 @@
+nexus-oms-web/
+├── public/                               # Static assets (logos, icons, channel badges)
+├── src/
+│   ├── app/                              # Next.js App Router (Routing, Layouts, Sub-routes)
+│   │   ├── (auth)/                       # Phân hệ Xác thực & Định danh (FR-12)
+│   │   │   ├── login/
+│   │   │   └── forgot-password/
+│   │   │
+│   │   ├── (dashboard)/                  # Khu vực nghiệp vụ chính (Dùng chung AppShell Layout)
+│   │   │   ├── layout.tsx
+│   │   │   ├── page.tsx                  # Dashboard tổng quan (KPIs, Alert tồn kho, Sales Overview)
+│   │   │   │
+│   │   │   ├── orders/                   # Unified Order Hub (FR-07 -> FR-11)
+│   │   │   │   ├── [id]/                 # Chi tiết đơn, dòng thời gian, Trace ID, trạng thái Saga
+│   │   │   │   ├── custom-views/         # Quản lý bộ lọc tùy chỉnh đã lưu
+│   │   │   │   └── routing-rules/        # Cấu hình định tuyến kho thông minh & tách/gộp đơn
+│   │   │   │
+│   │   │   ├── inventory/                # Kiểm soát 5 trạng thái tồn kho & Điều chuyển (FR-03 -> FR-05)
+│   │   │   │   ├── balances/             # Danh sách SKU: Physical, Reserved, Available, Safety Stock
+│   │   │   │   ├── stock-transfers/      # Phiếu chuyển kho liên chi nhánh (Out-transit -> Received)
+│   │   │   │   ├── buffer-rules/         # Cấu hình tồn kho an toàn & tỷ lệ đẩy sàn
+│   │   │   │   └── audit-logs/           # Lịch sử biến động sổ cái StockTransactions
+│   │   │   │
+│   │   │   ├── catalog/                  # Danh mục & Ánh xạ sàn (FR-01, FR-02)
+│   │   │   │   ├── products/             # Quản lý sản phẩm, biến thể & Pre-signed URL upload ảnh S3
+│   │   │   │   └── channel-mappings/     # Bảng ánh xạ Internal SKU <-> Shopee/TikTok SKU
+│   │   │   │
+│   │   │   ├── channels/                 # Cấu hình kênh bán & Đồng bộ (FR-06, FR-07)
+│   │   │   │   ├── connections/          # Quản lý kết nối shop (Website, Shopee, TikTok Shop)
+│   │   │   │   └── sync-monitor/         # Giám sát trạng thái đẩy tồn (Kafka events & retry log)
+│   │   │   │
+│   │   │   ├── post-purchase/            # Hậu mãi, Đổi trả RMA & CSKH (FR-16, FR-18)
+│   │   │   │   ├── rma-requests/         # Vòng đời đổi/trả/hoàn tiền & kiểm tra chất lượng kho
+│   │   │   │   └── ai-insights/          # AI Smart Ops: Phân tích khiếu nại (đã che PII), đề xuất xử lý
+│   │   │   │
+│   │   │   ├── crm/                      # Hồ sơ khách hàng hợp kênh & Loyalty (FR-17)
+│   │   │   │   └── customers/            # Khách hàng hợp nhất từ Web, Shopee, TikTok & điểm thưởng
+│   │   │   │
+│   │   │   ├── finance/                  # Báo cáo, Đối soát doanh thu & Sổ cái (FR-13 -> FR-15)
+│   │   │   │   ├── reconciliation/       # Đối soát tự động 00:00 & đối soát tiền hàng sàn TMĐT
+│   │   │   │   ├── sales-velocity/       # Báo cáo tốc độ bán hàng, doanh thu, lợi nhuận ròng
+│   │   │   │   └── tax-invoices/         # Chuẩn hóa dữ liệu xuất kế toán/hóa đơn điện tử
+│   │   │   │
+│   │   │   └── settings/                 # Cài đặt Tenant, Multi-Warehouse, Phân quyền RBAC (FR-03, FR-12)
+│   │   │       ├── warehouses/
+│   │   │       └── rbac/
+│   │   │
+│   │   └── simulator/                    # Web Simulator Dashboard (Phục vụ demo kỹ thuật & Chaos Test)
+│   │       ├── flash-sale/               # Kịch bản mô phỏng 500 request tranh chấp 1 SKU
+│   │       ├── duplicate-webhooks/       # Kịch bản test trùng đơn (Idempotency 2 lớp)
+│   │       └── chaos-sandbox/            # Nút inject lỗi ngắt Redis, delay queue, DLQ
+│   │
+│   ├── components/                       # UI Components dùng chung (Shared UI / Shadcn)
+│   │   ├── ui/                           # Base atomic UI (Button, Input, Badge, Dialog, Data-table...)
+│   │   ├── layout/                       # AppHeader, AppSidebar, TenantSwitcher, NotificationBell
+│   │   └── common/                       # LoadingSkeleton, ConfirmationModal, StatusTag, EmptyState
+│   │
+│   ├── features/                         # Logic nghiệp vụ theo Domain (Tương thích module Backend .NET)
+│   │   ├── orders/                       # Hooks, components, types, schemas cho Đơn hàng
+│   │   ├── inventory/                    # Logic tính Available, khóa giữ tồn, kiểm tra buffer
+│   │   ├── catalog/                      # Logic upload ảnh S3 qua Pre-signed URL, mapper SKU
+│   │   ├── channels/                     # Trạng thái webhook, monitor sync queue
+│   │   ├── post-purchase/                # Logic xử lý RMA, review guardrail, PII preview
+│   │   ├── crm/                          # Logic hợp nhất customer profile, RFM
+│   │   ├── finance/                      # Format báo cáo số liệu, biểu đồ vận tốc bán
+│   │   └── simulator/                    # Client calls trigger stress test, biểu đồ p50/p95/p99
+│   │
+│   ├── hooks/                            # Custom React Hooks dùng chung (useDebounce, useAuth, useTenant...)
+│   ├── lib/                              # Cấu hình SDK bên thứ ba & helper gốc (axios, dayjs, chartjs...)
+│   ├── providers/                        # Providers (QueryClientProvider, AuthProvider, TenantProvider)
+│   ├── schemas/                          # Zod validation schemas dùng chung
+│   ├── services/                         # Base API Client (Axios interceptor gắn JWT, Header TenantId)
+│   ├── stores/                           # Global state (Zustand: AuthStore, TenantStore, UIStore)
+│   ├── types/                            # Global TypeScript Interfaces (ApiResponse, Pagination, Tenant)
+│   └── utils/                            # Helper functions (formatCurrencyVND, formatDateTime, piiMasker)
+│
+├── .env.local
+├── .eslintrc.json
+├── next.config.mjs
+├── package.json
+├── tailwind.config.ts
+├── tsconfig.json
+└── README.md
